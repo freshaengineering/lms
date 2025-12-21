@@ -111,6 +111,15 @@ export function htmlToText(html) {
 	return div.textContent || div.innerText || ''
 }
 
+class IframeTool extends Embed {
+	static get toolbox() {
+		return {
+			title: 'IFrame',
+			icon: '<svg xmlns="http://www.w3.org/2000/svg" width="17" height="15" viewBox="0 0 20 16"><!-- Icon from IcoMoon Free by Keyamoon - https://www.gnu.org/licenses/gpl.html --><path fill="currentColor" d="m13 11.5l1.5 1.5l5-5l-5-5L13 4.5L16.5 8zm-6-7L5.5 3l-5 5l5 5L7 11.5L3.5 8zm3.958-2.148l1.085.296l-3 11l-1.085-.296z"/></svg>',
+		}
+	}
+}
+
 export function getEditorTools() {
 	return {
 		header: {
@@ -157,7 +166,7 @@ export function getEditorTools() {
 			shortcut: 'CMD+SHIFT+M',
 		},
 		iframe: {
-			class: Embed,
+			class: IframeTool,
 			inlineToolbar: true,
 			config: {
 				services: {
