@@ -123,6 +123,9 @@ class IframeTool {
 	static get pasteConfig() {
 		return {
 			tags: ['IFRAME'],
+			patterns: {
+				iframe: /<iframe[^>]*>[\s\S]*?<\/iframe>/i,
+			},
 		}
 	}
 
@@ -135,11 +138,38 @@ class IframeTool {
 		if (this.data && this.data.html) {
 			this.wrapper.innerHTML = this.data.html
 		} else {
-			// Simple placeholder until content is set via paste or editing
-			const hint = document.createElement('div')
-			hint.className = 'text-ink-gray-5 text-sm'
-			hint.innerText = 'Paste an <iframe> here or use the toolbar button.'
-			this.wrapper.appendChild(hint)
+			// Editable area to allow pasting iframe HTML directly
+			this.input = document.createElement('div')
+			this.input.className = 'iframe-input'
+			this.input.contentEditable = 'true'
+			this.input.setAttribute('data-placeholder', 'Paste an <iframe> here…')
+			this.input.style.minHeight = '2.25rem'
+			this.input.style.outline = 'none'
+			this.input.style.border = '1px dashed #d3d3d3'
+			this.input.style.borderRadius = '8px'
+			this.input.style.padding = '8px'
+
+			this.input.addEventListener('paste', (e) => {
+				const html = e.clipboardData?.getData('text/html') || ''
+				const text = e.clipboardData?.getData('text/plain') || ''
+				const match = (html && html.match(/<iframe[^>]*>[\s\S]*?<\/iframe>/i)) ||
+					(text && text.match(/<iframe[^>]*>[\s\S]*?<\/iframe>/i))
+				if (match && match[0]) {
+					e.preventDefault()
+					this.setIframeHtml(match[0])
+				}
+			})
+
+			// Also allow dropping raw iframe text
+			this.input.addEventListener('input', () => {
+				const content = this.input.innerText
+				const match = content && content.match(/<iframe[^>]*>[\s\S]*?<\/iframe>/i)
+				if (match && match[0]) {
+					this.setIframeHtml(match[0])
+				}
+			})
+
+			this.wrapper.appendChild(this.input)
 		}
 	}
 
@@ -158,8 +188,22 @@ class IframeTool {
 		if (type === 'tag' && detail && detail.tag === 'IFRAME') {
 			const iframeEl = detail.data
 			if (iframeEl && iframeEl.outerHTML) {
-				this.wrapper.innerHTML = iframeEl.outerHTML
+				this.setIframeHtml(iframeEl.outerHTML)
 			}
+		} else if (type === 'pattern' && detail) {
+			const { key, data } = detail
+			if (key === 'iframe' && typeof data === 'string') {
+				this.setIframeHtml(data)
+			}
+		}
+	}
+
+	setIframeHtml(html) {
+		this.wrapper.innerHTML = html
+		// Remove input if present since we now have the final iframe
+		if (this.input && this.input.parentElement) {
+			this.input.parentElement.removeChild(this.input)
+			this.input = null
 		}
 	}
 }
