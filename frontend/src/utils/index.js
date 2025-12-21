@@ -156,6 +156,20 @@ export function getEditorTools() {
 			class: InlineCode,
 			shortcut: 'CMD+SHIFT+M',
 		},
+		iframe: {
+			class: Embed,
+			inlineToolbar: true,
+			config: {
+				services: {
+					providedLink: {
+						regex: /(<iframe[^>]*>[\s\S]*?<\/iframe>)/i,
+						embedUrl: '<%= remote_id %>',
+						html: '<%= remote_id %>',
+						id: (matches) => matches[0],
+					}
+				}
+			}
+		},
 		embed: {
 			class: Embed,
 			inlineToolbar: false,
