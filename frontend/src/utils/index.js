@@ -111,17 +111,12 @@ export function htmlToText(html) {
 	return div.textContent || div.innerText || ''
 }
 
-class IframeTool {
+class IframeTool extends Embed {
 	static get toolbox() {
 		return {
 			title: 'IFrame',
 			icon: '<svg xmlns="http://www.w3.org/2000/svg" width="17" height="15" viewBox="0 0 20 16"><path fill="currentColor" d="m13 11.5l1.5 1.5l5-5l-5-5L13 4.5L16.5 8zm-6-7L5.5 3l-5 5l5 5L7 11.5L3.5 8zm3.958-2.148l1.085.296l-3 11l-1.085-.296z"/></svg>',
 		}
-	}
-
-	// Let EditorJS know this tool supports read-only mode
-	static get isReadOnlySupported() {
-		return true
 	}
 
 	// Let EditorJS route iframe tag pastes to this tool
@@ -134,110 +129,31 @@ class IframeTool {
 		}
 	}
 
-	constructor({ data, api, readOnly }) {
-		this.api = api
-		this.readOnly = readOnly
-		this.data = data || {}
-		this.wrapper = document.createElement('div')
-		this.wrapper.className = 'iframe-block'
-
-		if (this.data && (this.data.html || this.data.embed)) {
-			this.renderFromData()
-		} else if (!this.readOnly) {
-			// Editable area to allow pasting iframe HTML directly
-			this.input = document.createElement('div')
-			this.input.className = 'iframe-input'
-			this.input.contentEditable = 'true'
-			this.input.setAttribute('data-placeholder', 'Paste an <iframe> here…')
-			this.input.style.minHeight = '2.25rem'
-			this.input.style.outline = 'none'
-			this.input.style.border = '1px dashed #d3d3d3'
-			this.input.style.borderRadius = '8px'
-			this.input.style.padding = '8px'
-
-			this.input.addEventListener('paste', (e) => {
-				const html = e.clipboardData?.getData('text/html') || ''
-				const text = e.clipboardData?.getData('text/plain') || ''
-				const match = (html && html.match(/<iframe[^>]*>[\s\S]*?<\/iframe>/i)) ||
-					(text && text.match(/<iframe[^>]*>[\s\S]*?<\/iframe>/i))
-				if (match && match[0]) {
-					e.preventDefault()
-					this.setIframeHtml(match[0])
-				}
-			})
-
-			// Also allow dropping raw iframe text
-			this.input.addEventListener('input', () => {
-				const content = this.input.innerText
-				const match = content && content.match(/<iframe[^>]*>[\s\S]*?<\/iframe>/i)
-				if (match && match[0]) {
-					this.setIframeHtml(match[0])
-				}
-			})
-
-			this.wrapper.appendChild(this.input)
-		}
-	}
-
-	render() {
-		return this.wrapper
-	}
-
-	// Render DOM from data only
-	renderFromData() {
-		const html = this.data?.embed || this.data?.html || ''
-		this.wrapper.innerHTML = html
-	}
-
-	save() {
-		// Persist the exact HTML we rendered; keep `data` in sync
-		this.data = this.data || {}
-		// Prefer `embed` key to align with Embed's data shape
-		const currentHtml = this.wrapper.innerHTML
-		this.data.embed = currentHtml
-		this.data.html = currentHtml
-		return this.data
-	}
-
 	onPaste(event) {
-		// For tag-based paste, EditorJS provides the actual DOM element
 		const { type, detail } = event
-		if (type === 'tag' && detail && detail.tag === 'IFRAME') {
-			const iframeEl = detail.data
-			if (iframeEl && iframeEl.outerHTML) {
-				this.setIframeHtml(iframeEl.outerHTML)
-			}
-		} else if (type === 'pattern' && detail) {
-			const { key, data } = detail
-			if (key === 'iframe' && typeof data === 'string') {
-				this.setIframeHtml(data)
-			}
-		}
-	}
 
-	// Build consistent data object from pasted iframe HTML
-	buildIframeData(html) {
-		const srcMatch = html.match(/<iframe[^>]*\s+src=["']([^"']+)["'][^>]*>/i)
-		const widthMatch = html.match(/\swidth=["']([^"']+)["']/i)
-		const heightMatch = html.match(/\sheight=["']([^"']+)["']/i)
-		return {
-			// service: 'iframe',
-			service: 'youtube', // Placeholder; actual service detection not implemented
-			source: srcMatch ? srcMatch[1] : '',
-			embed: html,
-			width: widthMatch ? widthMatch[1] : '100%',
-			height: heightMatch ? heightMatch[1] : (window.innerWidth < 640 ? '15rem' : '30rem'),
+		// Handle iframe tag/pattern paste
+		let html = ''
+		if (type === 'tag' && detail?.data?.outerHTML) {
+			html = detail.data.outerHTML
+		} else if (type === 'pattern' && detail?.data) {
+			html = typeof detail.data === 'string' ? detail.data : ''
 		}
-	}
 
-	setIframeHtml(html) {
-		// Update data first; DOM is derived via renderFromData()
-		this.data = { ...this.data, ...this.buildIframeData(html) }
-		this.renderFromData()
-		// Remove input if present since we now have the final iframe
-		if (this.input && this.input.parentElement) {
-			this.input.parentElement.removeChild(this.input)
-			this.input = null
+		if (html) {
+			// Extract metadata from the iframe HTML
+			const srcMatch = html.match(/<iframe[^>]*\s+src=["']([^"']+)["'][^>]*>/i)
+			const widthMatch = html.match(/\swidth=["']([^"']+)["']/i)
+			const heightMatch = html.match(/\sheight=["']([^"']+)["']/i)
+
+			// Update data with Embed-compatible structure
+			this.data = {
+				service: 'iframe',
+				source: srcMatch ? srcMatch[1] : '',
+				embed: html,
+				width: widthMatch ? widthMatch[1] : undefined,
+				height: heightMatch ? heightMatch[1] : undefined,
+			}
 		}
 	}
 }
