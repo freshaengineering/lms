@@ -219,13 +219,13 @@ class IframeTool {
 	buildIframeData(html) {
 		const srcMatch = html.match(/<iframe[^>]*\s+src=["']([^"']+)["'][^>]*>/i)
 		const widthMatch = html.match(/\swidth=["']([^"']+)["']/i)
-		heightMatch = html.match(/\sheight=["']([^"']+)["']/i)
+		const heightMatch = html.match(/\sheight=["']([^"']+)["']/i)
 		return {
 			service: 'iframe',
 			source: srcMatch ? srcMatch[1] : '',
 			embed: html,
-			width: widthMatch ? widthMatch[1] : undefined,
-			height: heightMatch ? heightMatch[1] : undefined,
+			width: widthMatch ? widthMatch[1] : '100%',
+			height: heightMatch ? heightMatch[1] : (window.innerWidth < 640 ? '15rem' : '30rem'),
 		}
 	}
 
