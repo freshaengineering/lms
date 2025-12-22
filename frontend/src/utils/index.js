@@ -129,49 +129,50 @@ class IframeTool extends Embed {
 		}
 	}
 
-	constructor({ data, api, readOnly }) {
-		super({ data, api, readOnly })
-		
-		// If no data exists and not in read-only mode, show custom input
-		if (!data?.embed && !data?.html && !readOnly) {
-			// Create custom input field for pasting iframe HTML
-			this.input = document.createElement('div')
-			this.input.className = 'iframe-input'
-			this.input.contentEditable = 'true'
-			this.input.setAttribute('data-placeholder', 'Paste an <iframe> here…')
-			this.input.style.minHeight = '2.25rem'
-			this.input.style.outline = 'none'
-			this.input.style.border = '1px dashed #d3d3d3'
-			this.input.style.borderRadius = '8px'
-			this.input.style.padding = '8px'
-
-			this.input.addEventListener('paste', (e) => {
-				const html = e.clipboardData?.getData('text/html') || ''
-				const text = e.clipboardData?.getData('text/plain') || ''
-				const match = (html && html.match(/<iframe[^>]*>[\s\S]*?<\/iframe>/i)) ||
-					(text && text.match(/<iframe[^>]*>[\s\S]*?<\/iframe>/i))
-				if (match && match[0]) {
-					e.preventDefault()
-					this.processIframeHtml(match[0])
-				}
-			})
-
-			// Also allow typing/dropping raw iframe text
-			this.input.addEventListener('input', () => {
-				const content = this.input.innerText
-				const match = content && content.match(/<iframe[^>]*>[\s\S]*?<\/iframe>/i)
-				if (match && match[0]) {
-					this.processIframeHtml(match[0])
-				}
-			})
-
-			// Replace Embed's default element with our custom input
-			this.element.innerHTML = ''
-			this.element.appendChild(this.input)
+	render() {
+		// If there's existing data, let Embed handle rendering
+		if (this.data?.embed || this.data?.html) {
+			return super.render()
 		}
+
+		// Otherwise, show custom input field
+		const wrapper = document.createElement('div')
+		
+		this.input = document.createElement('div')
+		this.input.className = 'iframe-input'
+		this.input.contentEditable = 'true'
+		this.input.setAttribute('data-placeholder', 'Paste an <iframe> here…')
+		this.input.style.minHeight = '2.25rem'
+		this.input.style.outline = 'none'
+		this.input.style.border = '1px dashed #d3d3d3'
+		this.input.style.borderRadius = '8px'
+		this.input.style.padding = '8px'
+
+		this.input.addEventListener('paste', (e) => {
+			const html = e.clipboardData?.getData('text/html') || ''
+			const text = e.clipboardData?.getData('text/plain') || ''
+			const match = (html && html.match(/<iframe[^>]*>[\s\S]*?<\/iframe>/i)) ||
+				(text && text.match(/<iframe[^>]*>[\s\S]*?<\/iframe>/i))
+			if (match && match[0]) {
+				e.preventDefault()
+				this.processIframeHtml(match[0], wrapper)
+			}
+		})
+
+		// Also allow typing/dropping raw iframe text
+		this.input.addEventListener('input', () => {
+			const content = this.input.innerText
+			const match = content && content.match(/<iframe[^>]*>[\s\S]*?<\/iframe>/i)
+			if (match && match[0]) {
+				this.processIframeHtml(match[0], wrapper)
+			}
+		})
+
+		wrapper.appendChild(this.input)
+		return wrapper
 	}
 
-	processIframeHtml(html) {
+	processIframeHtml(html, container) {
 		// Extract metadata from the iframe HTML
 		const srcMatch = html.match(/<iframe[^>]*\s+src=["']([^"']+)["'][^>]*>/i)
 		const widthMatch = html.match(/\swidth=["']([^"']+)["']/i)
@@ -186,16 +187,9 @@ class IframeTool extends Embed {
 			height: heightMatch ? heightMatch[1] : undefined,
 		}
 
-		// TODO: REmove
-		console.log('Processed iframe data:', this.data)
-
-
 		// Replace input with the actual iframe
-		this.element.innerHTML = html
-		if (this.input && this.input.parentElement) {
-			this.input.remove()
-			this.input = null
-		}
+		container.innerHTML = html
+		this.input = null
 	}
 
 	onPaste(event) {
@@ -209,8 +203,8 @@ class IframeTool extends Embed {
 			html = typeof detail.data === 'string' ? detail.data : ''
 		}
 
-		if (html) {
-			this.processIframeHtml(html)
+		if (html && this.element) {
+			this.processIframeHtml(html, this.element)
 		}
 	}
 }
