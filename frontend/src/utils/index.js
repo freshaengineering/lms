@@ -221,7 +221,8 @@ class IframeTool {
 		const widthMatch = html.match(/\swidth=["']([^"']+)["']/i)
 		const heightMatch = html.match(/\sheight=["']([^"']+)["']/i)
 		return {
-			service: 'iframe',
+			// service: 'iframe',
+			service: 'youtube', // Placeholder; actual service detection not implemented
 			source: srcMatch ? srcMatch[1] : '',
 			embed: html,
 			width: widthMatch ? widthMatch[1] : '100%',
