@@ -189,15 +189,15 @@ class IframeTool {
 		this.wrapper.innerHTML = html
 	}
 
-	// save() {
-	// 	// Persist the exact HTML we rendered; keep `data` in sync
-	// 	this.data = this.data || {}
-	// 	// Prefer `embed` key to align with Embed's data shape
-	// 	const currentHtml = this.wrapper.innerHTML
-	// 	this.data.embed = currentHtml
-	// 	this.data.html = currentHtml
-	// 	return this.data
-	// }
+	save() {
+		// Persist the exact HTML we rendered; keep `data` in sync
+		this.data = this.data || {}
+		// Prefer `embed` key to align with Embed's data shape
+		const currentHtml = this.wrapper.innerHTML
+		this.data.embed = currentHtml
+		this.data.html = currentHtml
+		return this.data
+	}
 
 	onPaste(event) {
 		// For tag-based paste, EditorJS provides the actual DOM element
