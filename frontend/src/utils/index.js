@@ -119,6 +119,11 @@ class IframeTool {
 		}
 	}
 
+	// Let EditorJS know this tool supports read-only mode
+	static get isReadOnlySupported() {
+		return true
+	}
+
 	// Let EditorJS route iframe tag pastes to this tool
 	static get pasteConfig() {
 		return {
@@ -129,15 +134,16 @@ class IframeTool {
 		}
 	}
 
-	constructor({ data, api }) {
+	constructor({ data, api, readOnly }) {
 		this.api = api
+		this.readOnly = readOnly
 		this.data = data || {}
 		this.wrapper = document.createElement('div')
 		this.wrapper.className = 'iframe-block'
 
-		if (this.data && this.data.html) {
-			this.wrapper.innerHTML = this.data.html
-		} else {
+		if (this.data && (this.data.html || this.data.embed)) {
+			this.renderFromData()
+		} else if (!this.readOnly) {
 			// Editable area to allow pasting iframe HTML directly
 			this.input = document.createElement('div')
 			this.input.className = 'iframe-input'
@@ -177,10 +183,21 @@ class IframeTool {
 		return this.wrapper
 	}
 
-	save(block) {
-		// Persist the exact HTML we rendered
-		return { html: block.innerHTML }
+	// Render DOM from data only
+	renderFromData() {
+		const html = this.data?.embed || this.data?.html || ''
+		this.wrapper.innerHTML = html
 	}
+
+	// save() {
+	// 	// Persist the exact HTML we rendered; keep `data` in sync
+	// 	this.data = this.data || {}
+	// 	// Prefer `embed` key to align with Embed's data shape
+	// 	const currentHtml = this.wrapper.innerHTML
+	// 	this.data.embed = currentHtml
+	// 	this.data.html = currentHtml
+	// 	return this.data
+	// }
 
 	onPaste(event) {
 		// For tag-based paste, EditorJS provides the actual DOM element
@@ -198,8 +215,24 @@ class IframeTool {
 		}
 	}
 
+	// Build consistent data object from pasted iframe HTML
+	buildIframeData(html) {
+		const srcMatch = html.match(/<iframe[^>]*\s+src=["']([^"']+)["'][^>]*>/i)
+		const widthMatch = html.match(/\swidth=["']([^"']+)["']/i)
+		heightMatch = html.match(/\sheight=["']([^"']+)["']/i)
+		return {
+			service: 'iframe',
+			source: srcMatch ? srcMatch[1] : '',
+			embed: html,
+			width: widthMatch ? widthMatch[1] : undefined,
+			height: heightMatch ? heightMatch[1] : undefined,
+		}
+	}
+
 	setIframeHtml(html) {
-		this.wrapper.innerHTML = html
+		// Update data first; DOM is derived via renderFromData()
+		this.data = { ...this.data, ...this.buildIframeData(html) }
+		this.renderFromData()
 		// Remove input if present since we now have the final iframe
 		if (this.input && this.input.parentElement) {
 			this.input.parentElement.removeChild(this.input)
