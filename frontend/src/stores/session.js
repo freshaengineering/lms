@@ -13,8 +13,6 @@ export const sessionStore = defineStore('lms-session', () => {
 		let _sessionUser = cookies.get('user_id')
 		if (_sessionUser === 'Guest') {
 			_sessionUser = null
-		} else {
-			userResource.reload()
 		}
 		return _sessionUser
 	}

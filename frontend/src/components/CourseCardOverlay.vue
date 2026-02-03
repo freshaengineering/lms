@@ -37,7 +37,7 @@
 					<CertificationLinks :courseName="course.data.name" class="w-full" />
 				</div>
 				<router-link
-					v-else-if="course.data.paid_course && !isAdmin"
+					v-else-if="course.data.paid_course"
 					:to="{
 						name: 'Billing',
 						params: {
@@ -56,15 +56,14 @@
 					</Button>
 				</router-link>
 				<Badge
-					v-else-if="course.data.disable_self_learning && !isAdmin"
+					v-else-if="course.data.disable_self_learning"
 					theme="blue"
 					size="lg"
-					class="mb-4"
 				>
-					{{ __('Contact the Administrator to enroll for this course') }}
+					{{ __('Contact the Administrator to enroll for this course.') }}
 				</Badge>
 				<Button
-					v-else-if="!isAdmin"
+					v-else-if="!user.data?.is_moderator && !is_instructor()"
 					@click="enrollStudent()"
 					variant="solid"
 					class="w-full"
@@ -89,11 +88,40 @@
 					</template>
 					{{ __('Get Certificate') }}
 				</Button>
+				<Button
+					v-if="user.data?.is_moderator || is_instructor()"
+					class="w-full mt-2"
+					size="md"
+					@click="showProgressSummary"
+				>
+					<template #prefix>
+						<TrendingUp class="size-4 stroke-1.5" />
+						{{ __('Progress Summary') }}
+					</template>
+				</Button>
+				<router-link
+					v-if="user?.data?.is_moderator || is_instructor()"
+					:to="{
+						name: 'CourseForm',
+						params: {
+							courseName: course.data.name,
+						},
+					}"
+				>
+					<Button variant="subtle" class="w-full mt-2" size="md">
+						<template #prefix>
+							<Pencil class="size-4 stroke-1.5" />
+						</template>
+						<span>
+							{{ __('Edit') }}
+						</span>
+					</Button>
+				</router-link>
 			</div>
 			<div class="space-y-4">
 				<div
 					class="font-medium text-ink-gray-9"
-					:class="{ 'mt-8': course.data.membership && !readOnlyMode }"
+					:class="{ 'mt-8': !readOnlyMode }"
 				>
 					{{ __('This course has:') }}
 				</div>
@@ -140,6 +168,12 @@
 			</div>
 		</div>
 	</div>
+	<CourseProgressSummary
+		v-if="user.data?.is_moderator || is_instructor()"
+		v-model="showProgressModal"
+		:courseName="course.data.name"
+		:enrollments="course.data.enrollments"
+	/>
 </template>
 <script setup>
 import {
@@ -155,14 +189,15 @@ import {
 import { computed, inject, ref } from 'vue'
 import { Badge, Button, call, createResource, toast } from 'frappe-ui'
 import { formatAmount } from '@/utils/'
+import { capture } from '@/telemetry'
 import { useRouter } from 'vue-router'
 import CertificationLinks from '@/components/CertificationLinks.vue'
-import { useTelemetry } from 'frappe-ui/frappe'
+import CourseProgressSummary from '@/components/Modals/CourseProgressSummary.vue'
 
 const router = useRouter()
 const user = inject('$user')
+const showProgressModal = ref(false)
 const readOnlyMode = window.read_only_mode
-const { capture } = useTelemetry()
 
 const props = defineProps({
 	course: {
@@ -180,7 +215,7 @@ const video_link = computed(() => {
 
 function enrollStudent() {
 	if (!user.data) {
-		toast.warning(__('You need to login first to enroll for this course'))
+		toast.success(__('You need to login first to enroll for this course'))
 		setTimeout(() => {
 			window.location.href = `/login?redirect-to=${window.location.pathname}`
 		}, 500)
@@ -259,7 +294,7 @@ const fetchCertificate = () => {
 	})
 }
 
-const isAdmin = computed(() => {
-	return user.data?.is_moderator || is_instructor()
-})
+const showProgressSummary = () => {
+	showProgressModal.value = true
+}
 </script>

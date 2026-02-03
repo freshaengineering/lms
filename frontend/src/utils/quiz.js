@@ -5,7 +5,6 @@ import { usersStore } from '../stores/user'
 import translationPlugin from '../translation'
 import { CircleHelp } from 'lucide-vue-next'
 import router from '@/router'
-import { getLmsRoute } from '@/utils/basePath'
 
 export class Quiz {
 	constructor({ data, api, readOnly }) {
@@ -43,8 +42,7 @@ export class Quiz {
 
 	renderQuiz(quiz) {
 		if (this.readOnly) {
-			const quizPath = getLmsRoute(`quiz/${quiz}?fromLesson=1`)
-			this.wrapper.innerHTML = `<iframe src="${quizPath}" class="w-full h-[500px]"></iframe>`
+			this.wrapper.innerHTML = `<iframe src="/lms/quiz/${quiz}?fromLesson=1" class="w-full h-[500px]"></iframe>`
 			return
 		}
 		this.wrapper.innerHTML = `<div class='border rounded-md p-4 text-center bg-surface-menu-bar mb-4'>

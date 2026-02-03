@@ -4,29 +4,14 @@
 			<div class="text-lg text-ink-gray-9 font-semibold">
 				{{ __('Upcoming Evaluations') }}
 			</div>
-			<Button v-if="canScheduleEvals" @click="openEvalModal">
+			<Button
+				v-if="
+					upcoming_evals.data?.length != evaluationCourses.length && !forHome
+				"
+				@click="openEvalModal"
+			>
 				{{ __('Schedule Evaluation') }}
 			</Button>
-		</div>
-		<div
-			v-if="endDate && !endDateHasPassed"
-			class="text-sm leading-5 bg-surface-amber-1 text-ink-amber-3 p-2 rounded-md mb-4"
-		>
-			{{ __('The last day to schedule your evaluations is ') }}
-			<span class="font-medium">
-				{{ dayjs(endDate).format('DD MMMM YYYY') }} </span
-			>.
-			{{ __('Please make sure to schedule your evaluation before this date.') }}
-		</div>
-		<div
-			v-else-if="endDateHasPassed"
-			class="text-sm leading-5 bg-surface-red-1 text-ink-red-3 p-2 rounded-md mb-4"
-		>
-			{{
-				__(
-					'The deadline to schedule evaluations has passed. Please contact the Instructor for assistance.'
-				)
-			}}
 		</div>
 		<div v-if="upcoming_evals.data?.length">
 			<div
@@ -114,7 +99,7 @@
 				</div>
 			</div>
 		</div>
-		<div v-else-if="!endDateHasPassed" class="text-ink-gray-5">
+		<div v-else class="text-ink-gray-5">
 			{{ __('Schedule an evaluation to get certified.') }}
 		</div>
 	</div>
@@ -137,12 +122,11 @@ import {
 } from 'lucide-vue-next'
 import { inject, ref, getCurrentInstance, computed } from 'vue'
 import { formatTime } from '@/utils'
-import { Button, createResource, createListResource, call } from 'frappe-ui'
+import { Button, createResource, call } from 'frappe-ui'
 import EvaluationModal from '@/components/Modals/EvaluationModal.vue'
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 
 const dayjs = inject('$dayjs')
-const user = inject('$user')
 const showEvalModal = ref(false)
 const app = getCurrentInstance()
 const { $dialog } = app.appContext.config.globalProperties
@@ -166,26 +150,12 @@ const props = defineProps({
 	},
 })
 
-const upcoming_evals = createListResource({
-	doctype: 'LMS Certificate Request',
-	filters: {
-		course: props.courses?.length
-			? ['in', props.courses.map((course) => course.course)]
-			: undefined,
-		batch_name: props.batch || undefined,
-		status: 'Upcoming',
-		member: user?.data?.name,
-		date: ['>=', dayjs().format('YYYY-MM-DD')],
+const upcoming_evals = createResource({
+	url: 'lms.lms.utils.get_upcoming_evals',
+	params: {
+		courses: props.courses.map((course) => course.course),
+		batch: props.batch,
 	},
-	fields: [
-		'name',
-		'date',
-		'start_time',
-		'evaluator_name',
-		'course_title',
-		'google_meet_link',
-	],
-	orderBy: 'date',
 	auto: true,
 })
 
@@ -201,18 +171,6 @@ const evaluationCourses = computed(() => {
 	return props.courses.filter((course) => {
 		return course.evaluator != ''
 	})
-})
-
-const canScheduleEvals = computed(() => {
-	return (
-		upcoming_evals.data?.length != evaluationCourses.value?.length &&
-		!props.forHome &&
-		!endDateHasPassed.value
-	)
-})
-
-const endDateHasPassed = computed(() => {
-	return dayjs().isSameOrAfter(dayjs(props.endDate))
 })
 
 const cancelEvaluation = (evl) => {

@@ -199,6 +199,7 @@ import { useSidebar } from '@/stores/sidebar'
 import { useSettings } from '@/stores/settings'
 import { Button, call, createResource, Tooltip, toast } from 'frappe-ui'
 import PageModal from '@/components/Modals/PageModal.vue'
+import { capture } from '@/telemetry'
 import LMSLogo from '@/components/Icons/LMSLogo.vue'
 import { useRouter } from 'vue-router'
 import {
@@ -232,7 +233,6 @@ import {
 	showHelpModal,
 	minimize,
 	IntermediateStepModal,
-	useTelemetry,
 } from 'frappe-ui/frappe'
 import InviteIcon from '@/components/Icons/InviteIcon.vue'
 import UserDropdown from '@/components/Sidebar/UserDropdown.vue'
@@ -246,7 +246,6 @@ let sidebarStore = useSidebar()
 const socket = inject('$socket')
 const unreadCount = ref(0)
 const sidebarLinks = ref(null)
-const { capture } = useTelemetry()
 const showPageModal = ref(false)
 const isModerator = ref(false)
 const isInstructor = ref(false)
@@ -269,13 +268,12 @@ const iconProps = {
 onMounted(() => {
 	setUpOnboarding()
 	addKeyboardShortcut()
-	updateSidebarLinks()
 	socket.on('publish_lms_notifications', (data) => {
 		unreadNotifications.reload()
 	})
 })
 
-const updateSidebarLinksVisibility = () => {
+const setSidebarLinks = () => {
 	sidebarSettings.reload(
 		{},
 		{
@@ -406,13 +404,9 @@ const steps = reactive([
 			minimize.value = true
 			let course = await getFirstCourse()
 			if (course) {
-				router.push({
-					name: 'CourseDetail',
-					params: { courseName: course },
-					hash: '#settings',
-				})
+				router.push({ name: 'CourseForm', params: { courseName: course } })
 			} else {
-				router.push({ name: 'Courses', query: { newCourse: '1' } })
+				router.push({ name: 'CourseForm' })
 			}
 		},
 	},
@@ -427,12 +421,11 @@ const steps = reactive([
 			let course = await getFirstCourse()
 			if (course) {
 				router.push({
-					name: 'CourseDetail',
+					name: 'CourseForm',
 					params: { courseName: course },
-					hash: '#settings',
 				})
 			} else {
-				router.push({ name: 'Courses', query: { newCourse: '1' } })
+				router.push({ name: 'Courses' })
 			}
 		},
 	},
@@ -597,17 +590,9 @@ watch(userResource, async () => {
 		await programs.reload()
 		setUpOnboarding()
 	}
-	updateSidebarLinks()
-})
-
-watch(settingsStore.settings, () => {
-	updateSidebarLinks()
-})
-
-const updateSidebarLinks = () => {
 	sidebarLinks.value = getSidebarLinks()
-	updateSidebarLinksVisibility()
-}
+	setSidebarLinks()
+})
 
 const redirectToWebsite = () => {
 	window.open('https://frappe.io/learning', '_blank')

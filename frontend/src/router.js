@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { usersStore } from './stores/user'
 import { sessionStore } from './stores/session'
 import { useSettings } from './stores/settings'
-import { getLmsBasePath } from './utils/basePath'
 
 const routes = [
 	{
@@ -13,12 +12,12 @@ const routes = [
 	{
 		path: '/courses',
 		name: 'Courses',
-		component: () => import('@/pages/Courses/Courses.vue'),
+		component: () => import('@/pages/Courses.vue'),
 	},
 	{
 		path: '/courses/:courseName',
 		name: 'CourseDetail',
-		component: () => import('@/pages/Courses/CourseDetail.vue'),
+		component: () => import('@/pages/CourseDetail.vue'),
 		props: true,
 	},
 	{
@@ -30,7 +29,7 @@ const routes = [
 	{
 		path: '/courses/:courseName/certification',
 		name: 'CourseCertification',
-		component: () => import('@/pages/Courses/CourseCertification.vue'),
+		component: () => import('@/pages/CourseCertification.vue'),
 		props: true,
 	},
 	{
@@ -117,6 +116,12 @@ const routes = [
 		path: '/job-openings/:job/applications',
 		name: 'JobApplications',
 		component: () => import('@/pages/JobApplications.vue'),
+		props: true,
+	},
+	{
+		path: '/courses/:courseName/edit',
+		name: 'CourseForm',
+		component: () => import('@/pages/CourseForm.vue'),
 		props: true,
 	},
 	{
@@ -263,7 +268,7 @@ const routes = [
 ]
 
 let router = createRouter({
-	history: createWebHistory(`/${getLmsBasePath()}`),
+	history: createWebHistory('/lms'),
 	routes,
 })
 

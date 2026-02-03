@@ -207,18 +207,14 @@
 				:text="access.data.message"
 				:buttonLabel="type == 'course' ? 'Checkout Course' : 'Checkout Batch'"
 				:buttonLink="
-					type == 'course'
-						? getLmsRoute(`courses/${name}`)
-						: getLmsRoute(`batches/${name}`)
+					type == 'course' ? `/lms/courses/${name}` : `/lms/batches/${name}`
 				"
 			/>
 		</div>
 		<div v-else-if="!user.data?.name">
 			<NotPermitted
 				text="Please login to access this page."
-				:buttonLink="`/login?redirect-to=${getLmsRoute(
-					`billing/${type}/${name}`
-				)}`"
+				:buttonLink="`/login?redirect-to=/lms/billing/${type}/${name}`"
 			/>
 		</div>
 	</div>
@@ -238,13 +234,10 @@ import { sessionStore } from '../stores/session'
 import Link from '@/components/Controls/Link.vue'
 import NotPermitted from '@/components/NotPermitted.vue'
 import { X } from 'lucide-vue-next'
-import { useTelemetry } from 'frappe-ui/frappe'
-import { getLmsRoute } from '@/utils/basePath'
 
 const user = inject('$user')
 const { brand } = sessionStore()
 const showConsentWarning = ref(false)
-const { capture } = useTelemetry()
 
 onMounted(() => {
 	const script = document.createElement('script')
@@ -346,7 +339,6 @@ const generatePaymentLink = () => {
 				return validateAddress()
 			},
 			onSuccess(data) {
-				capture('checkout_initiated', { type: props.type })
 				window.location.href = data
 			},
 			onError(err) {
@@ -446,11 +438,11 @@ const changeCurrency = (country) => {
 
 const redirectTo = computed(() => {
 	if (props.type == 'course') {
-		return getLmsRoute(`courses/${props.name}`)
+		return `/lms/courses/${props.name}`
 	} else if (props.type == 'batch') {
-		return getLmsRoute(`batches/${props.name}`)
+		return `/lms/batches/${props.name}`
 	} else if (props.type == 'certificate') {
-		return getLmsRoute(`courses/${props.name}/certification`)
+		return `/lms/courses/${props.name}/certification`
 	}
 })
 

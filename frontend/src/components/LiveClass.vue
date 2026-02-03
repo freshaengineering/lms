@@ -107,11 +107,7 @@
 		v-model:reloadLiveClasses="liveClasses"
 	/>
 
-	<LiveClassAttendance
-		v-if="showAttendance"
-		v-model="showAttendance"
-		:live_class="attendanceFor"
-	/>
+	<LiveClassAttendance v-model="showAttendance" :live_class="attendanceFor" />
 </template>
 <script setup>
 import { createListResource, Button, Tooltip } from 'frappe-ui'

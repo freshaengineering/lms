@@ -112,12 +112,7 @@
 		}"
 	>
 		<template #body-content>
-			<FormControl
-				v-model="title"
-				:label="__('Title')"
-				type="text"
-				@keydown.enter="insertQuiz(() => (showForm = false))"
-			/>
+			<FormControl v-model="title" :label="__('Title')" type="text" />
 		</template>
 	</Dialog>
 </template>
@@ -144,11 +139,9 @@ import { computed, inject, onMounted, ref, watch } from 'vue'
 import { Plus } from 'lucide-vue-next'
 import { sessionStore } from '@/stores/session'
 import { escapeHTML } from '@/utils'
-import { useTelemetry } from 'frappe-ui/frappe'
 import EmptyState from '@/components/EmptyState.vue'
 
 const { brand } = sessionStore()
-const { capture } = useTelemetry()
 const user = inject('$user')
 const dayjs = inject('$dayjs')
 const router = useRouter()
@@ -218,7 +211,6 @@ const insertQuiz = (close) => {
 				toast.success(__('Quiz created successfully'))
 				close()
 				title.value = ''
-				capture('quiz_created')
 				router.push({
 					name: 'QuizForm',
 					params: {

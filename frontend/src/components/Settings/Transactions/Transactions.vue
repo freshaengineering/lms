@@ -1,13 +1,6 @@
 <template>
-	<TransactionDetails
-		v-if="step == 'new'"
-		:transactions="transactions"
-		:data="data"
-		v-model:show="show"
-		@updateStep="updateStep"
-	/>
 	<TransactionList
-		v-else-if="step === 'list'"
+		v-if="step === 'list'"
 		:label="props.label"
 		:description="props.description"
 		:transactions="transactions"
@@ -40,8 +33,6 @@ const updateStep = (newStep: 'list' | 'new' | 'edit', newData: any) => {
 	step.value = newStep
 	if (newData) {
 		data.value = newData
-	} else {
-		data.value = null
 	}
 }
 

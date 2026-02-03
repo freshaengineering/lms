@@ -17,20 +17,9 @@ def search_sqlite(query: str):
 
 
 def prepare_search_results(result):
-	groups = get_grouped_results(result)
-
-	out = []
-	for key in groups:
-		groups[key] = remove_duplicates(groups[key])
-		groups[key].sort(key=lambda x: x.get("modified"), reverse=True)
-		out.append({"title": key, "items": groups[key]})
-
-	return out
-
-
-def get_grouped_results(result):
 	roles = frappe.get_roles()
 	groups = {}
+
 	for r in result["results"]:
 		doctype = r["doctype"]
 		if doctype == "LMS Course" and can_access_course(r, roles):
@@ -42,17 +31,12 @@ def get_grouped_results(result):
 		elif doctype == "Job Opportunity" and can_access_job(r, roles):
 			r["author_info"] = get_instructor_info(doctype, r)
 			groups.setdefault("Job Opportunities", []).append(r)
-	return groups
 
+	out = []
+	for key in groups:
+		out.append({"title": key, "items": groups[key]})
 
-def remove_duplicates(items):
-	seen = set()
-	unique_items = []
-	for item in items:
-		if item["name"] not in seen:
-			seen.add(item["name"])
-			unique_items.append(item)
-	return unique_items
+	return out
 
 
 def can_access_course(course, roles):
@@ -89,14 +73,10 @@ def get_instructor_info(doctype, record):
 	instructors = frappe.get_all(
 		"Course Instructor", filters={"parenttype": doctype, "parent": record.get("name")}, pluck="instructor"
 	)
+
 	instructor = record.get("author")
 	if len(instructors):
-		for ins in instructors:
-			if ins.split("@")[0] in record.get("content"):
-				instructor = ins
-				break
-		if not instructor:
-			instructor = instructors[0]
+		instructor = instructors[0]
 
 	return frappe.db.get_value(
 		"User",
