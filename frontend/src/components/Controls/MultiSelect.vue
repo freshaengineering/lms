@@ -19,31 +19,16 @@
 									showOptions = true
 								}
 							"
-							@click="
-								(e) => {
-									showOptions = true
-									nextTick(() => {
-										setFocus()
-									})
-								}
-							"
-							@focus="
-								() => {
-									if (!filterOptions.data || filterOptions.data.length === 0) {
-										reload('')
-									}
-								}
-							"
 							autocomplete="off"
 						/>
 					</template>
 					<template #body="{ isOpen, close }">
 						<div v-show="isOpen">
 							<div
-								class="flex flex-col mt-1 rounded-lg bg-surface-white py-1 text-base border-2 max-h-[13rem]"
+								class="mt-1 rounded-lg bg-surface-white py-1 text-base border-2"
 							>
 								<ComboboxOptions
-									class="flex-1 my-1 overflow-y-auto px-1.5"
+									class="my-1 max-h-[12rem] overflow-y-auto px-1.5"
 									:class="options.length ? 'min-h-[6rem]' : 'min-h-[3.8rem]'"
 									static
 								>
@@ -62,11 +47,7 @@
 										>
 											<div class="flex flex-col gap-1 p-1">
 												<div class="text-base font-medium text-ink-gray-8">
-													{{
-														option.value == option.label
-															? option.description
-															: option.label
-													}}
+													{{ option.description }}
 												</div>
 												<div class="text-sm text-ink-gray-5">
 													{{ option.value }}
@@ -77,19 +58,22 @@
 									<div v-else class="text-ink-gray-7 px-4">
 										{{ __('No results found') }}
 									</div>
-								</ComboboxOptions>
-								<div v-if="attrs.onCreate" class="px-1 pt-2 bg-white border-t">
-									<Button
-										variant="ghost"
-										class="w-full !justify-start"
-										:label="__('Create New')"
-										@click="attrs.onCreate(close)"
+									<div
+										v-if="attrs.onCreate"
+										class="absolute bottom-2 left-1 w-[95%] pt-2 bg-white border-t"
 									>
-										<template #prefix>
-											<Plus class="h-4 w-4 stroke-1.5" />
-										</template>
-									</Button>
-								</div>
+										<Button
+											variant="ghost"
+											class="w-full !justify-start"
+											:label="__('Create New')"
+											@click="attrs.onCreate(close)"
+										>
+											<template #prefix>
+												<Plus class="h-4 w-4 stroke-1.5" />
+											</template>
+										</Button>
+									</div>
+								</ComboboxOptions>
 							</div>
 						</div>
 					</template>
@@ -123,7 +107,7 @@ import {
 } from '@headlessui/vue'
 import { createResource, Popover, Button } from 'frappe-ui'
 import { ref, computed, nextTick, useAttrs } from 'vue'
-import { set, watchDebounced } from '@vueuse/core'
+import { watchDebounced } from '@vueuse/core'
 import { X, Plus } from 'lucide-vue-next'
 
 const props = defineProps({
@@ -157,20 +141,21 @@ const props = defineProps({
 
 const values = defineModel()
 const attrs = useAttrs()
+const emails = ref([])
 const search = ref(null)
 const error = ref(null)
 const query = ref('')
 const text = ref('')
 const showOptions = ref(false)
-const emit = defineEmits(['update:modelValue'])
 
 const selectedValue = computed({
 	get: () => query.value || '',
 	set: (val) => {
 		query.value = ''
+		if (val) {
+			showOptions.value = false
+		}
 		val?.value && addValue(val.value)
-		showOptions.value = false
-		emit('update:modelValue', values.value)
 	},
 })
 
@@ -198,8 +183,7 @@ const filterOptions = createResource({
 
 const options = computed(() => {
 	setFocus()
-	const allOptions = filterOptions.data || []
-	return allOptions.filter((option) => !values.value?.includes(option.value))
+	return filterOptions.data || []
 })
 
 function reload(val) {
@@ -242,7 +226,6 @@ const addValue = (value) => {
 
 const removeValue = (value) => {
 	values.value = values.value.filter((v) => v !== value)
-	emit('update:modelValue', values.value)
 }
 
 function setFocus() {

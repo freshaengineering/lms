@@ -2,7 +2,7 @@
 	<div>
 		<div class="flex items-center justify-between mb-4">
 			<div class="text-ink-gray-9 font-medium">
-				{{ studentCount.data ?? 0 }} {{ __('Students') }}
+				{{ students.data?.length }} {{ __('Students') }}
 			</div>
 			<Button v-if="!readOnlyMode" @click="openStudentModal()">
 				<template #prefix>
@@ -15,7 +15,7 @@
 		<div v-if="students.data?.length">
 			<ListView
 				class="max-h-[75vh]"
-				:columns="studentColumns"
+				:columns="getStudentColumns()"
 				:rows="students.data"
 				row-key="name"
 				:options="{
@@ -27,7 +27,7 @@
 				>
 					<ListHeaderItem
 						:item="item"
-						v-for="item in studentColumns"
+						v-for="item in getStudentColumns()"
 						:title="item.label"
 					>
 						<template #prefix="{ item }">
@@ -43,7 +43,7 @@
 					<ListRow
 						:row="row"
 						v-for="row in students.data"
-						class="group cursor-pointer hover:bg-surface-gray-2 rounded"
+						class="group cursor-pointer"
 						@click="openStudentProgressModal(row)"
 					>
 						<template #default="{ column, item }">
@@ -88,11 +88,6 @@
 						</div>
 					</template>
 				</ListSelectBanner>
-				<div class="mt-4 flex justify-center" v-if="students.hasNextPage">
-					<Button @click="students.next()">
-						{{ __('Load More') }}
-					</Button>
-				</div>
 			</ListView>
 		</div>
 		<div v-else-if="!students.loading" class="text-sm italic text-ink-gray-5">
@@ -115,7 +110,6 @@
 import {
 	Avatar,
 	Button,
-	createListResource,
 	createResource,
 	FeatherIcon,
 	ListHeader,
@@ -145,48 +139,39 @@ const props = defineProps({
 	},
 })
 
-const studentCount = createResource({
-	url: 'frappe.client.get_count',
-	cache: ['batch_student_count', props.batch?.data?.name],
-	params: {
-		doctype: 'LMS Batch Enrollment',
-		filters: { batch: props.batch?.data?.name },
-	},
-	auto: true,
-})
-
-const students = createListResource({
-	doctype: 'LMS Batch Enrollment',
+const students = createResource({
 	url: 'lms.lms.utils.get_batch_students',
-	cache: ['batch_students', props.batch?.data?.name],
-	pageLength: 50,
-	filters: {
+	params: {
 		batch: props.batch?.data?.name,
 	},
 	auto: true,
 })
 
-const studentColumns = [
-	{
-		label: 'Full Name',
-		key: 'full_name',
-		width: '25rem',
-		icon: 'user',
-	},
-	{
-		label: 'Progress',
-		key: 'progress',
-		width: '15rem',
-		icon: 'activity',
-	},
-	{
-		label: 'Last Active',
-		key: 'last_active',
-		width: '10rem',
-		align: 'center',
-		icon: 'clock',
-	},
-]
+const getStudentColumns = () => {
+	let columns = [
+		{
+			label: 'Full Name',
+			key: 'full_name',
+			width: '20rem',
+			icon: 'user',
+		},
+		{
+			label: 'Progress',
+			key: 'progress',
+			width: '15rem',
+			icon: 'activity',
+		},
+		{
+			label: 'Last Active',
+			key: 'last_active',
+			width: '10rem',
+			align: 'center',
+			icon: 'clock',
+		},
+	]
+
+	return columns
+}
 
 const openStudentModal = () => {
 	showStudentModal.value = true
@@ -215,7 +200,6 @@ const removeStudents = (selections, unselectAll) => {
 		{
 			onSuccess(data) {
 				students.reload()
-				studentCount.reload()
 				props.batch.reload()
 				toast.success(__('Students deleted successfully'))
 				unselectAll()

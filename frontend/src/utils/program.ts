@@ -4,7 +4,6 @@ import translationPlugin from '@/translation'
 import ProgrammingExerciseModal from '@/pages/ProgrammingExercises/ProgrammingExerciseModal.vue';
 import { call } from 'frappe-ui';
 import { usersStore } from '@/stores/user'
-import { getLmsRoute } from '@/utils/basePath'
 
 
 export class Program {
@@ -74,10 +73,7 @@ export class Program {
                 fieldname: ['name'],
             }).then((data: { name: string }) => {
                 let submission = data.name || 'new'
-                const submissionPath = getLmsRoute(
-                    `programming-exercises/${exercise}/submission/${submission}?fromLesson=1`
-                )
-                this.wrapper.innerHTML = `<iframe src="${submissionPath}" class="w-full h-[900px] border rounded-md"></iframe>`
+                this.wrapper.innerHTML = `<iframe src="/lms/programming-exercises/${exercise}/submission/${submission}?fromLesson=1" class="w-full h-[900px] border rounded-md"></iframe>`
             })
             return
         } 

@@ -65,7 +65,6 @@ import { Dialog, FormControl } from 'frappe-ui'
 import { nextTick, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { Link } from 'frappe-ui/frappe'
-import { getLmsRoute } from '@/utils/basePath'
 
 const show = ref(false)
 const quiz = ref(null)
@@ -95,10 +94,7 @@ const addAssessment = () => {
 }
 
 const redirectToForm = () => {
-	if (props.type == 'quiz') {
-		window.open(getLmsRoute('quizzes?new=true'), '_blank')
-	} else {
-		window.open(getLmsRoute('assignments?new=true'), '_blank')
-	}
+	if (props.type == 'quiz') window.open('/lms/quizzes?new=true', '_blank')
+	else window.open('/lms/assignments?new=true', '_blank')
 }
 </script>

@@ -54,15 +54,15 @@ class LMSQuizSubmission(Document):
 			notification = frappe._dict(
 				{
 					"subject": _("You have got a score of {0} for the quiz {1}").format(
-						(frappe.bold(self.score)), frappe.bold(self.quiz_title)
+						self.score, self.quiz_title
 					),
 					"email_content": _(
 						"There has been an update on your submission. You have got a score of {0} for the quiz {1}"
-					).format(frappe.bold(self.score), frappe.bold(self.quiz_title)),
+					).format(self.score, self.quiz_title),
 					"document_type": self.doctype,
 					"document_name": self.name,
 					"for_user": self.member,
-					"from_user": frappe.session.user,
+					"from_user": "Administrator",
 					"type": "Alert",
 					"link": "",
 				}

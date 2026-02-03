@@ -326,7 +326,6 @@
 		@updateNotes="updateNotes"
 	/>
 	<VideoStatistics
-		v-if="showStatsDialog"
 		v-model="showStatsDialog"
 		:lessonName="lesson.data?.name"
 		:lessonTitle="lesson.data?.title"
@@ -379,7 +378,6 @@ import CourseOutline from '@/components/CourseOutline.vue'
 import UserAvatar from '@/components/UserAvatar.vue'
 import Notes from '@/components/Notes/Notes.vue'
 import InlineLessonMenu from '@/components/Notes/InlineLessonMenu.vue'
-import { getLmsRoute } from '@/utils/basePath'
 
 const user = inject('$user')
 const socket = inject('$socket')
@@ -872,7 +870,6 @@ const scrollDiscussionsIntoView = () => {
 }
 
 const updateNotes = () => {
-	if (!user.data) return
 	notes.update({
 		filters: {
 			lesson: lesson.data?.name,
@@ -905,9 +902,7 @@ watch(allowDiscussions, () => {
 })
 
 const redirectToLogin = () => {
-	window.location.href = `/login?redirect-to=${getLmsRoute(
-		`courses/${props.courseName}`
-	)}`
+	window.location.href = `/login?redirect-to=/lms/courses/${props.courseName}`
 }
 
 usePageMeta(() => {

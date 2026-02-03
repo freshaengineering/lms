@@ -22,10 +22,7 @@
 							</div>
 						</Tooltip>
 						<Tooltip :text="__('Course')">
-							<div
-								class="flex space-x-2 w-fit cursor-pointer"
-								@click="openLink('course', event.course)"
-							>
+							<div class="flex items-center space-x-2 w-fit">
 								<BookOpen class="h-4 w-4 stroke-1.5" />
 								<span>
 									{{ event.course_title }}
@@ -33,10 +30,7 @@
 							</div>
 						</Tooltip>
 						<Tooltip v-if="event.batch_title" :text="__('Batch')">
-							<div
-								class="flex space-x-2 w-fit cursor-pointer"
-								@click="openLink('batch', event.batch_name)"
-							>
+							<div class="flex items-center space-x-2 w-fit">
 								<Users class="h-4 w-4 stroke-1.5" />
 								<span>
 									{{ event.batch_title }}
@@ -340,7 +334,7 @@ const certificateDetails = createResource({
 		}
 	},
 	onError(err) {
-		certificate.template = defaultTemplate.data?.value
+		certificate.template = defaultTemplate.data.value
 	},
 	auto: false,
 })
@@ -381,16 +375,6 @@ const openCertificate = (certificate) => {
 			certificate.name
 		}&format=${encodeURIComponent(certificate.template)}`
 	)
-}
-
-const openLink = (type, name) => {
-	let url = ''
-	if (type === 'course') {
-		url = `/lms/courses/${name}`
-	} else if (type === 'batch') {
-		url = `/lms/batches/${name}#students`
-	}
-	window.open(url, '_blank')
 }
 
 const statusOptions = computed(() => {

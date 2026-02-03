@@ -23,8 +23,10 @@
 					(value, close) => {
 						close()
 						router.push({
-							name: 'Courses',
-							query: { newCourse: '1' },
+							name: 'CourseForm',
+							params: {
+								courseName: 'new',
+							},
 						})
 					}
 				"
