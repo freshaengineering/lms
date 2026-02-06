@@ -324,12 +324,12 @@ def get_certification_query(filters):
 
 	query = (
 		frappe.qb.from_(Certificate)
-		.select(Certificate.member, Certificate.issue_date)
-		.distinct()
+		.select(Certificate.member, fn.Max(Certificate.issue_date).as_("issue_date"))
 		.join(User)
 		.on(Certificate.member == User.name)
 		.where(Certificate.published == 1)
 		.where(User.enabled == 1)
+		.groupby(Certificate.member)
 	)
 
 	if filters:
