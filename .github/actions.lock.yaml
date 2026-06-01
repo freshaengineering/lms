@@ -1,5 +1,5 @@
 version: 1
-generated_at: 2026-05-25T13:36:33Z
+generated_at: 2026-06-01T09:35:53Z
 internal: []
 trusted:
   - action: actions/cache
@@ -95,37 +95,37 @@ trusted:
 external:
   - action: codecov/codecov-action
     refs:
-      - v5
+      - 75cd11691c0faa626561e295848008c8a7dddffe
     occurrences:
-      v5:
+      75cd11691c0faa626561e295848008c8a7dddffe:
         .github/workflows/ci.yml:
           - jobs.coverage.steps.[2].uses
   - action: docker/build-push-action
     refs:
-      - v6
+      - 10e90e3645eae34f1e60eeb005ba3a3d33f178e8
     occurrences:
-      v6:
+      10e90e3645eae34f1e60eeb005ba3a3d33f178e8:
         .github/workflows/build.yml:
           - jobs.build.steps.[7].uses
   - action: docker/login-action
     refs:
-      - v2
+      - 465a07811f14bebb1938fbed4728c6a1ff8901fc
     occurrences:
-      v2:
+      465a07811f14bebb1938fbed4728c6a1ff8901fc:
         .github/workflows/build.yml:
           - jobs.build.steps.[3].uses
   - action: docker/setup-buildx-action
     refs:
-      - v3
+      - 8d2750c68a42422c14e847fe6c8ac0403b4cbd6f
     occurrences:
-      v3:
+      8d2750c68a42422c14e847fe6c8ac0403b4cbd6f:
         .github/workflows/build.yml:
           - jobs.build.steps.[2].uses
   - action: docker/setup-qemu-action
     refs:
-      - v3
+      - c7c53464625b32c7a7e944ae62b3e17d2b600130
     occurrences:
-      v3:
+      c7c53464625b32c7a7e944ae62b3e17d2b600130:
         .github/workflows/build.yml:
           - jobs.build.steps.[1].uses
   - action: octokit/request-action
@@ -144,9 +144,9 @@ external:
           - jobs.notify-deployment-app.steps.[1].uses
   - action: pre-commit/action
     refs:
-      - v3.0.1
+      - 2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd
     occurrences:
-      v3.0.1:
+      2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd:
         .github/workflows/linters.yml:
           - jobs.linters.steps.[3].uses
   - action: zeke/semantic-pull-requests
