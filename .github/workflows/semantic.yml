@@ -16,4 +16,4 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
 
-      - uses: zeke/semantic-pull-requests@main
+      - uses: zeke/semantic-pull-requests@f4916f442d077624ea7bc24751be187be3c3ac9f # main

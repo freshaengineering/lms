@@ -1,5 +1,5 @@
 version: 1
-generated_at: 2026-06-15T13:15:43Z
+generated_at: 2026-06-15T17:50:20Z
 internal: []
 trusted:
   - action: actions/cache
@@ -130,9 +130,9 @@ external:
           - jobs.build.steps.[1].uses
   - action: octokit/request-action
     refs:
-      - v2.x
+      - 02f5e7c637a73a3b12ed81015fa7fb5f11cc5d7d
     occurrences:
-      v2.x:
+      02f5e7c637a73a3b12ed81015fa7fb5f11cc5d7d:
         .github/workflows/make_release_pr.yml:
           - jobs.release.steps.[0].uses
   - action: peter-evans/repository-dispatch
@@ -151,9 +151,9 @@ external:
           - jobs.linters.steps.[3].uses
   - action: zeke/semantic-pull-requests
     refs:
-      - main
+      - f4916f442d077624ea7bc24751be187be3c3ac9f
     occurrences:
-      main:
+      f4916f442d077624ea7bc24751be187be3c3ac9f:
         .github/workflows/semantic.yml:
           - jobs.semantic.steps.[1].uses
 local: []
