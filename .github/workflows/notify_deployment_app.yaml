@@ -29,7 +29,7 @@ jobs:
             repositories: app-launchpad
 
       - name: Notify
-        uses: peter-evans/repository-dispatch@28959ce8df70de7be546dd1250a005dd32156697 # v4.0.1
+        uses: step-security/repository-dispatch@1a81ac1c72a4ad222c516293b6adf56b34c4cffd # v4.0.2
         with:
             token: ${{ steps.app-token.outputs.token }}
             repository: freshaengineering/app-launchpad
