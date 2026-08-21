@@ -1,20 +1,7 @@
 version: 1
-generated_at: 2026-06-15T17:50:20Z
+generated_at: 2026-08-21T11:49:20Z
 internal: []
 trusted:
-  - action: actions/cache
-    refs:
-      - 0057852bfaa89a56745cba8c7296529d2fc39830
-    occurrences:
-      0057852bfaa89a56745cba8c7296529d2fc39830:
-        .github/workflows/ci.yml:
-          - jobs.tests.steps.[3].uses
-        .github/workflows/linters.yml:
-          - jobs.linters.steps.[2].uses
-        .github/workflows/ui-tests.yml:
-          - jobs.test.steps.[5].uses
-          - jobs.test.steps.[7].uses
-          - jobs.test.steps.[8].uses
   - action: actions/checkout
     refs:
       - 34e114876b0b11c390a56381ad16ebd13914f8d5
@@ -23,68 +10,40 @@ trusted:
     occurrences:
       34e114876b0b11c390a56381ad16ebd13914f8d5:
         .github/workflows/build.yml:
-          - jobs.build.steps.[0].uses
-          - jobs.build.steps.[6].uses
+          - jobs.build.steps.[1].uses
+          - jobs.build.steps.[7].uses
         .github/workflows/generate-pot-file.yml:
-          - jobs.regenerate-pot-file.steps.[0].uses
+          - jobs.regenerate-pot-file.steps.[1].uses
         .github/workflows/linters.yml:
-          - jobs.commit-lint.steps.[0].uses
+          - jobs.commit-lint.steps.[1].uses
         .github/workflows/on_release.yml:
-          - jobs.release.steps.[0].uses
+          - jobs.release.steps.[1].uses
       ee0669bd1cc54295c223e0bb666b733df41de1c5:
         .github/workflows/ci.yml:
-          - jobs.tests.steps.[0].uses
+          - jobs.tests.steps.[1].uses
         .github/workflows/semantic.yml:
-          - jobs.semantic.steps.[0].uses
+          - jobs.semantic.steps.[1].uses
       f43a0e5ff2bd294095638e18286ca9a3d1956744:
         .github/workflows/ci.yml:
-          - jobs.coverage.steps.[0].uses
+          - jobs.coverage.steps.[1].uses
         .github/workflows/linters.yml:
-          - jobs.linters.steps.[0].uses
+          - jobs.linters.steps.[1].uses
         .github/workflows/ui-tests.yml:
-          - jobs.test.steps.[0].uses
+          - jobs.test.steps.[1].uses
   - action: actions/create-github-app-token
     refs:
       - 29824e69f54612133e76f7eaac726eef6c875baf
     occurrences:
       29824e69f54612133e76f7eaac726eef6c875baf:
         .github/workflows/notify_deployment_app.yaml:
-          - jobs.notify-deployment-app.steps.[0].uses
+          - jobs.notify-deployment-app.steps.[1].uses
   - action: actions/download-artifact
     refs:
       - d3f86a106a0bac45b974a628896c90dbdf5c8093
     occurrences:
       d3f86a106a0bac45b974a628896c90dbdf5c8093:
         .github/workflows/ci.yml:
-          - jobs.coverage.steps.[1].uses
-  - action: actions/setup-node
-    refs:
-      - 48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
-    occurrences:
-      48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e:
-        .github/workflows/ci.yml:
-          - jobs.tests.steps.[2].uses
-        .github/workflows/generate-pot-file.yml:
-          - jobs.regenerate-pot-file.steps.[2].uses
-        .github/workflows/linters.yml:
-          - jobs.commit-lint.steps.[1].uses
-        .github/workflows/on_release.yml:
-          - jobs.release.steps.[1].uses
-        .github/workflows/ui-tests.yml:
-          - jobs.test.steps.[3].uses
-  - action: actions/setup-python
-    refs:
-      - a309ff8b426b58ec0e2a45f0f869d46889d02405
-    occurrences:
-      a309ff8b426b58ec0e2a45f0f869d46889d02405:
-        .github/workflows/ci.yml:
-          - jobs.tests.steps.[1].uses
-        .github/workflows/generate-pot-file.yml:
-          - jobs.regenerate-pot-file.steps.[1].uses
-        .github/workflows/linters.yml:
-          - jobs.linters.steps.[1].uses
-        .github/workflows/ui-tests.yml:
-          - jobs.test.steps.[1].uses
+          - jobs.coverage.steps.[2].uses
   - action: actions/upload-artifact
     refs:
       - ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -93,69 +52,126 @@ trusted:
         .github/workflows/ci.yml:
           - jobs.tests.steps.[14].uses
 external:
-  - action: codecov/codecov-action
-    refs:
-      - 75cd11691c0faa626561e295848008c8a7dddffe
-    occurrences:
-      75cd11691c0faa626561e295848008c8a7dddffe:
-        .github/workflows/ci.yml:
-          - jobs.coverage.steps.[2].uses
-  - action: docker/build-push-action
-    refs:
-      - 10e90e3645eae34f1e60eeb005ba3a3d33f178e8
-    occurrences:
-      10e90e3645eae34f1e60eeb005ba3a3d33f178e8:
-        .github/workflows/build.yml:
-          - jobs.build.steps.[7].uses
-  - action: docker/login-action
-    refs:
-      - 465a07811f14bebb1938fbed4728c6a1ff8901fc
-    occurrences:
-      465a07811f14bebb1938fbed4728c6a1ff8901fc:
-        .github/workflows/build.yml:
-          - jobs.build.steps.[3].uses
-  - action: docker/setup-buildx-action
-    refs:
-      - 8d2750c68a42422c14e847fe6c8ac0403b4cbd6f
-    occurrences:
-      8d2750c68a42422c14e847fe6c8ac0403b4cbd6f:
-        .github/workflows/build.yml:
-          - jobs.build.steps.[2].uses
-  - action: docker/setup-qemu-action
-    refs:
-      - c7c53464625b32c7a7e944ae62b3e17d2b600130
-    occurrences:
-      c7c53464625b32c7a7e944ae62b3e17d2b600130:
-        .github/workflows/build.yml:
-          - jobs.build.steps.[1].uses
   - action: octokit/request-action
     refs:
       - 02f5e7c637a73a3b12ed81015fa7fb5f11cc5d7d
     occurrences:
       02f5e7c637a73a3b12ed81015fa7fb5f11cc5d7d:
         .github/workflows/make_release_pr.yml:
-          - jobs.release.steps.[0].uses
-  - action: peter-evans/repository-dispatch
-    refs:
-      - 28959ce8df70de7be546dd1250a005dd32156697
-    occurrences:
-      28959ce8df70de7be546dd1250a005dd32156697:
-        .github/workflows/notify_deployment_app.yaml:
-          - jobs.notify-deployment-app.steps.[1].uses
+          - jobs.release.steps.[1].uses
   - action: pre-commit/action
     refs:
       - 2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd
     occurrences:
       2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd:
         .github/workflows/linters.yml:
+          - jobs.linters.steps.[4].uses
+  - action: step-security/codecov-action
+    refs:
+      - db5c3605ff3c9dc7f0b2791e6bea84a561bacab8
+    occurrences:
+      db5c3605ff3c9dc7f0b2791e6bea84a561bacab8:
+        .github/workflows/ci.yml:
+          - jobs.coverage.steps.[3].uses
+  - action: step-security/docker-build-push-action
+    refs:
+      - 9af9b5acc1751dcec2aa5375a068979fa526bc9a
+    occurrences:
+      9af9b5acc1751dcec2aa5375a068979fa526bc9a:
+        .github/workflows/build.yml:
+          - jobs.build.steps.[8].uses
+  - action: step-security/docker-login-action
+    refs:
+      - 164e21d7e52229904128e2f946001cb88278c33d
+    occurrences:
+      164e21d7e52229904128e2f946001cb88278c33d:
+        .github/workflows/build.yml:
+          - jobs.build.steps.[4].uses
+  - action: step-security/harden-runner
+    refs:
+      - 9af89fc71515a100421586dfdb3dc9c984fbf411
+    occurrences:
+      9af89fc71515a100421586dfdb3dc9c984fbf411:
+        .github/workflows/build.yml:
+          - jobs.build.steps.[0].uses
+        .github/workflows/ci.yml:
+          - jobs.tests.steps.[0].uses
+          - jobs.coverage.steps.[0].uses
+        .github/workflows/generate-pot-file.yml:
+          - jobs.regenerate-pot-file.steps.[0].uses
+        .github/workflows/linters.yml:
+          - jobs.commit-lint.steps.[0].uses
+          - jobs.linters.steps.[0].uses
+        .github/workflows/make_release_pr.yml:
+          - jobs.release.steps.[0].uses
+        .github/workflows/notify_deployment_app.yaml:
+          - jobs.notify-deployment-app.steps.[0].uses
+        .github/workflows/on_release.yml:
+          - jobs.release.steps.[0].uses
+        .github/workflows/release_notes.yml:
+          - jobs.regen-notes.steps.[0].uses
+        .github/workflows/semantic.yml:
+          - jobs.semantic.steps.[0].uses
+        .github/workflows/ui-tests.yml:
+          - jobs.test.steps.[0].uses
+  - action: step-security/mise-action
+    refs:
+      - 2796166110dee826668caddd4bffedae5116e7cd
+    occurrences:
+      2796166110dee826668caddd4bffedae5116e7cd:
+        .github/workflows/ci.yml:
+          - jobs.tests.steps.[2].uses
+        .github/workflows/generate-pot-file.yml:
+          - jobs.regenerate-pot-file.steps.[2].uses
+        .github/workflows/linters.yml:
+          - jobs.commit-lint.steps.[2].uses
+          - jobs.linters.steps.[2].uses
+        .github/workflows/on_release.yml:
+          - jobs.release.steps.[2].uses
+        .github/workflows/ui-tests.yml:
+          - jobs.test.steps.[2].uses
+  - action: step-security/repository-dispatch
+    refs:
+      - 1a81ac1c72a4ad222c516293b6adf56b34c4cffd
+    occurrences:
+      1a81ac1c72a4ad222c516293b6adf56b34c4cffd:
+        .github/workflows/notify_deployment_app.yaml:
+          - jobs.notify-deployment-app.steps.[2].uses
+  - action: step-security/runs-on-cache
+    refs:
+      - c5b0cba15d05488ebc630ad8d1e95b3d9b35ac73
+    occurrences:
+      c5b0cba15d05488ebc630ad8d1e95b3d9b35ac73:
+        .github/workflows/ci.yml:
+          - jobs.tests.steps.[3].uses
+        .github/workflows/linters.yml:
           - jobs.linters.steps.[3].uses
+        .github/workflows/ui-tests.yml:
+          - jobs.test.steps.[5].uses
+          - jobs.test.steps.[7].uses
+          - jobs.test.steps.[8].uses
+  - action: step-security/setup-buildx-action
+    refs:
+      - 6997872a55d77391e51b87609556578131f44402
+    occurrences:
+      6997872a55d77391e51b87609556578131f44402:
+        .github/workflows/build.yml:
+          - jobs.build.steps.[3].uses
+  - action: step-security/setup-qemu-action
+    refs:
+      - fe44c529aab16157fc475f4991a7f926aa9a02a2
+    occurrences:
+      fe44c529aab16157fc475f4991a7f926aa9a02a2:
+        .github/workflows/build.yml:
+          - jobs.build.steps.[2].uses
   - action: zeke/semantic-pull-requests
     refs:
       - f4916f442d077624ea7bc24751be187be3c3ac9f
     occurrences:
       f4916f442d077624ea7bc24751be187be3c3ac9f:
         .github/workflows/semantic.yml:
-          - jobs.semantic.steps.[1].uses
+          - jobs.semantic.steps.[2].uses
 local: []
 docker: []
 dynamic: []
+nested_floating_deps: []

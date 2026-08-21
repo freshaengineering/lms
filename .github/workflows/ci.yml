@@ -40,15 +40,8 @@ jobs:
         api-key: ${{ secrets.GH_FRESHAENGINEERING_STEP_SECURITY_API_KEY }}
 
     - uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
-    - name: setup python
-      uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
-      with:
-        python-version: '3.14'
-    - name: setup node
-      uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
-      with:
-        node-version: '24'
-        check-latest: true
+    - name: Setup mise
+      uses: step-security/mise-action@2796166110dee826668caddd4bffedae5116e7cd # v4.2.0
     - name: setup cache for bench
       uses: step-security/runs-on-cache@c5b0cba15d05488ebc630ad8d1e95b3d9b35ac73 # v5.0.7
       with:
