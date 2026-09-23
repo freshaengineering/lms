@@ -64,7 +64,7 @@ jobs:
             ${{ runner.os }}-
 
       - name: Install and Run Pre-commit
-        uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd # v3.0.1
+        uses: step-security/pre-commit-action@7a07828799af2ab42e743e713087062c39044a63 # v3.0.1
 
       - name: Download Semgrep rules
         run: git clone --depth 1 https://github.com/frappe/semgrep-rules.git frappe-semgrep-rules
